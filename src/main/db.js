@@ -16,10 +16,6 @@ const adapter = new FileSync(path.join(STORE_PATH, 'data.json'))
 const db = Datastore(adapter)
 db._.mixin(LodashId)
 
-if (!db.has('categories').value()) {
-  db.set('categories', []).write()
-}
-
 if (!db.has('ideas').value()) {
   db.set('ideas', []).write()
 }

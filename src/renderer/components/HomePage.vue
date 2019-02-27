@@ -1,31 +1,23 @@
 <template>
   <div>
-    This is home page. Test for lowdb. Test it?
-    <div>
-      <button @click="save">Save something.</button>
-      <button @click="load">Load something.</button>
-    </div>
+    <category-container></category-container>
   </div>
 </template>
 
 <script>
+import CategoryContainer from './CategoryContainer'
+
 export default {
-  data() {
-    return {
-      ideas: []
-    }
-  },
-  methods: {
-    async save() {
-      console.log('save')
-      const result = await this.$send('test', {
-        content: Math.random()
-      })
-      console.log('Finish', result)
-    },
-    load() {
-      console.log('load')
-    }
+  components: {
+    CategoryContainer
   }
 }
 </script>
+
+<style>
+  html, body {
+    padding: 0;
+    margin: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+</style>

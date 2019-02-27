@@ -1,5 +1,5 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import db from './db'
+import '../renderer/store'
 
 /**
  * Set `__static` path to static files in production
@@ -43,15 +43,6 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createWindow()
   }
-})
-
-// 主进程数据库回调
-ipcMain.on('test', (event, arg) => {
-  db.get('ideas').push({
-    content: arg.content,
-    status: 1
-  }).write()
-  event.sender.send('test_reply')
 })
 
 /**
