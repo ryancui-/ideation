@@ -5,7 +5,10 @@ const state = {
   currentCategory: '',
 
   // ideas 核心数据
-  ideas: []
+  ideas: [],
+
+  // ideas 的后续更新
+  updates: {}
 }
 
 const getters = {
@@ -13,9 +16,15 @@ const getters = {
     return [...new Set(state.ideas.map(idea => idea.category).filter(c => c))]
   },
   ideasByCategory(state) {
-    return state.currentCategory
+    const ideas = state.currentCategory
       ? state.ideas.filter(idea => idea.category === state.currentCategory)
       : state.ideas
+
+    // ideas.sort((ideaA, ideaB) => {
+    //   return ideaB.create_time - ideaA.create_time
+    // })
+
+    return ideas
   },
   doingIdeas(state, getters) {
     return getters.ideasByCategory.filter(idea => idea.status === 1)
@@ -31,12 +40,12 @@ const mutations = {
   },
   addIdea(state, payload) {
     // 加上动态生成的 ID
-    state.ideas.push(Object.assign({}, {
+    state.ideas.unshift(Object.assign({}, {
       id: uuidv1(),
       status: 1,
       category: state.currentCategory,
-      parent_id: '',
-      due_time: null,
+      due_time: 0,
+      priority: 10,
       create_time: Date.now()
     }, payload))
   },
@@ -54,12 +63,6 @@ const mutations = {
       idea.deprecate_time = Date.now()
     }
   },
-  putIdeaIntoCategory(state, payload) {
-    const idea = state.ideas.find(i => i.id === payload.id)
-    if (idea) {
-      idea.category = payload
-    }
-  }
 }
 
 const actions = {
