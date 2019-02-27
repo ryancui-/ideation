@@ -14,19 +14,24 @@
     <div class="ideation-idea__tabs">
       <div class="ideation-idea__tab"
            :class="{ active: this.currentTab === 1 }"
-           @click="currentTab = 1">还在搞</div>
+           @click="currentTab = 1">还在搞
+      </div>
       <div class="ideation-idea__tab"
            :class="{ active: this.currentTab === 2 }"
-           @click="currentTab = 2">搞完了</div>
+           @click="currentTab = 2">搞完了
+      </div>
     </div>
 
     <div class="ideation-idea__working-container">
       <div class="ideation-idea__item"
-           v-for="idea in filteredIdeas" :key="idea.id">
+           v-for="idea in filteredIdeas" :key="idea.id"
+           @mouseenter="hoverItem = idea"
+           @mouseleave="hoverItem = null">
         <div class="ideation-idea__item-content" v-html="formatLineBreak(idea.content)"></div>
-        <div class="ideation-idea__item-operation">
-          <button @click="fulfillIdea(idea)">fulfill</button>
-          <button @click="deprecateIdea(idea)">deprecate</button>
+        <div class="ideation-idea__item-operation"
+             v-show="idea.status === 1 && hoverItem && hoverItem.id === idea.id">
+          <i class="fas fa-check-circle" @click="fulfillIdea(idea)"></i>
+          <i class="fas fa-trash-alt" @click="deprecateIdea(idea)"></i>
         </div>
       </div>
     </div>
@@ -41,7 +46,8 @@ export default {
     return {
       editingNewIdea: false,
       currentTab: 1,
-      content: ''
+      content: '',
+      hoverItem: null
     }
   },
   computed: {
@@ -133,13 +139,25 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    position: relative;
     .ideation-idea__item-content {
       font-size: 13px;
       flex: 1;
     }
     .ideation-idea__item-operation {
-      width: 130px;
-      margin-left: 10px;
+      position: absolute;
+      right: 20px;
+      top: 0;
+      bottom: 0;
+      width: max-content;
+      display: flex;
+      align-items: center;
+      i.fas {
+        color: #666666;
+        cursor: pointer;
+        font-size: 15px;
+        margin-left: 15px;
+      }
     }
   }
 

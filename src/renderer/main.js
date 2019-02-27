@@ -6,6 +6,8 @@ import router from './router'
 import store from './store'
 import bus from './bus'
 
+import '../../node_modules/@fortawesome/fontawesome-free/css/all.min.css'
+
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
 Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
