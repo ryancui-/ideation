@@ -5,17 +5,17 @@ const state = {
   currentCategory: '',
 
   // ideas 核心数据
-  ideas: [{
-    id: 1,
-    category: '123123',
-    content: 'lahahahha',
-    status: 1
-  }]
+  ideas: []
 }
 
 const getters = {
   categories(state) {
-    return [...new Set(state.ideas.map(idea => idea.category))]
+    return [...new Set(state.ideas.map(idea => idea.category).filter(c => c))]
+  },
+  ideasByCategory(state) {
+    return state.currentCategory
+      ? state.ideas.filter(idea => idea.category === state.currentCategory)
+      : state.ideas
   }
 }
 
@@ -25,7 +25,11 @@ const mutations = {
   },
   addIdea(state, payload) {
     // 加上动态生成的 ID
-    state.ideas.push(Object.assign({}, payload, { id: uuidv1() }))
+    state.ideas.push(Object.assign({}, {
+      id: uuidv1(),
+      status: 1,
+      category: state.currentCategory
+    }, payload))
   },
   fulfillIdea(state, payload) {
     const idea = state.ideas.find(i => i.id === payload.id)
@@ -39,6 +43,12 @@ const mutations = {
     if (idea) {
       idea.status = 3
       idea.deprecate_time = Date.now()
+    }
+  },
+  putIdeaIntoCategory(state, payload) {
+    const idea = state.ideas.find(i => i.id === payload.id)
+    if (idea) {
+      idea.category = payload
     }
   }
 }

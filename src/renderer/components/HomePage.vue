@@ -1,15 +1,18 @@
 <template>
   <div>
     <category-container></category-container>
+    <idea-container></idea-container>
   </div>
 </template>
 
 <script>
 import CategoryContainer from './CategoryContainer'
+import IdeaContainer from './IdeaContainer'
 
 export default {
   components: {
-    CategoryContainer
+    CategoryContainer,
+    IdeaContainer
   }
 }
 </script>

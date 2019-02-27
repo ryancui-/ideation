@@ -3,7 +3,7 @@
     <div class="ideation-category__header">Category</div>
     <div class="ideation-category__container">
       <div class="ideation-category__item"
-           @click="onCategorySelect(null)"
+           @click="onCategorySelect('')"
            :class="{ active: !currentCategory }">全部
       </div>
       <div class="ideation-category__item" v-for="category in categories"

@@ -5,9 +5,11 @@
 </template>
 
 <script>
-  export default {
-    name: 'ideation-app'
+export default {
+  name: 'ideation-app',
+  components: {
   }
+}
 </script>
 
 <style>
