@@ -16,6 +16,12 @@ const getters = {
     return state.currentCategory
       ? state.ideas.filter(idea => idea.category === state.currentCategory)
       : state.ideas
+  },
+  doingIdeas(state, getters) {
+    return getters.ideasByCategory.filter(idea => idea.status === 1)
+  },
+  doneIdeas(state, getters) {
+    return getters.ideasByCategory.filter(idea => idea.status !== 1)
   }
 }
 
@@ -28,7 +34,10 @@ const mutations = {
     state.ideas.push(Object.assign({}, {
       id: uuidv1(),
       status: 1,
-      category: state.currentCategory
+      category: state.currentCategory,
+      parent_id: '',
+      due_time: null,
+      create_time: Date.now()
     }, payload))
   },
   fulfillIdea(state, payload) {

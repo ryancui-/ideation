@@ -11,13 +11,10 @@
            :class="{ active: this.currentTab === 2 }"
            @click="currentTab = 2">Done
       </div>
-      <div class="ideation-idea__tab"
-           :class="{ active: this.currentTab === 3 }"
-           @click="currentTab = 3">Deprecated
-      </div>
     </div>
 
     <idea-doing v-show="currentTab === 1"></idea-doing>
+    <idea-done v-show="currentTab === 2"></idea-done>
   </div>
 </template>
 
@@ -25,11 +22,13 @@
 import { mapState, mapGetters } from 'vuex'
 import IdeaDoing from './idea/IdeaDoing'
 import IdeaNew from './idea/IdeaNew'
+import IdeaDone from './idea/IdeaDone'
 
 export default {
   components: {
     IdeaNew,
-    IdeaDoing
+    IdeaDoing,
+    IdeaDone
   },
   data() {
     return {

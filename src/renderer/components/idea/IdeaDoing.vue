@@ -1,7 +1,7 @@
 <template>
   <div class="ideation-doing-container">
     <div class="ideation-doing__item"
-         v-for="idea in ideasDoing" :key="idea.id"
+         v-for="idea in doingIdeas" :key="idea.id"
          @mouseenter="hoverItem = idea"
          @mouseleave="hoverItem = null">
       <div class="ideation-doing__item-content" v-html="formatLineBreak(idea.content)"></div>
@@ -28,12 +28,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-      ideas: 'ideasByCategory'
-    }),
-    ideasDoing() {
-      return this.ideas.filter(idea => idea.status === 1)
-    }
+    ...mapGetters(['doingIdeas'])
   },
   methods: {
     fulfillIdea(idea) {
