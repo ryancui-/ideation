@@ -37,6 +37,7 @@ export default {
   },
   computed: {
     ...mapState({
+      updates: state => state.main.updates,
       ideasDoing: state => state.main.ideasDoing,
       ideasDone: state => state.main.ideasDone,
       categories: state => state.main.categories,
@@ -47,9 +48,13 @@ export default {
       return this.categories
     },
     ideaSize() {
+      // FIXME: 这里有可能会有性能问题
       let result = this.ideasDoing.length
       for (let i = 0; i < this.ideasDone.length; i++) {
         result += this.ideasDone[i].data.length
+      }
+      for (let j in this.updates) {
+        result += this.updates[j].length
       }
       return result
     },
