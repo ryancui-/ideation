@@ -5,12 +5,13 @@ const state = {
   // 当前选择的分类，null为全部
   currentCategory: null,
 
+  // 分类列表
   categories: [],
 
-  ideas: [],
-
+  // 当前进行中的 ideas
   ideasDoing: [],
 
+  // 已经完成的 ideas
   ideasDone: [],
 
   // ideas 的后续更新
@@ -84,7 +85,7 @@ const mutations = {
   // 结束一个 idea，将其丢到 ideasDone 队列中
   finishIdea(state, payload) {
     const ideaIndex = state.ideasDoing.findIndex(i => i.id === payload.id)
-    if (ideaIndex) {
+    if (ideaIndex !== -1) {
       const idea = state.ideasDoing[ideaIndex]
       state.ideasDoing.splice(ideaIndex, 1)
 
@@ -108,7 +109,7 @@ const mutations = {
     const idea = state.ideasDoing.find(i => i.id === payload.id)
     if (idea) {
       if (!state.updates[idea.id]) {
-        state.updates[idea.id] = []
+        this._vm.$set(state.updates, idea.id, [])
       }
 
       state.updates[idea.id].unshift({
