@@ -111,7 +111,7 @@ export default {
       width: 100%;
       border: 1px solid rgba(0, 0, 0, 0.06);
       border-radius: 5px;
-      margin: 5px 0;
+      margin: 10px 0;
       box-sizing: border-box;
       box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
       position: relative;
