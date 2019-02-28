@@ -75,11 +75,10 @@ export default {
     const fileStat = fs.statSync(dataFilePath)
     this.fileSize = fileStat.size
 
-    // 没 20 秒读取一次文件大小
+    // 每 20 秒读取一次文件大小
     this.intervalId = setInterval(() => {
       const fileStat = fs.statSync(dataFilePath)
       this.fileSize = fileStat.size
-      console.log(this.fileSize)
     }, 1000 * 20)
   },
   beforeDestroy() {

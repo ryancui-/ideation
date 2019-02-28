@@ -7,19 +7,28 @@
     <textarea v-if="editingNewIdea" v-model="content"
               ref="contentTextarea"
               @blur="endEditing"
-              @keyup.alt.enter="createIdea"
               @keyup.esc="endEditing"
               class="ideation-new__textarea"></textarea>
   </div>
 </template>
 
 <script>
+import bus from '@/bus'
+
 export default {
   data() {
     return {
       editingNewIdea: false,
       content: ''
     }
+  },
+  created() {
+    bus.$on('ElectronShortcuts_Cmd+Enter', this.handleConfirmIdea)
+    bus.$on('ElectronShortcuts_Cmd+N', this.handleNewIdea)
+  },
+  beforeDestroy() {
+    bus.$off('ElectronShortcuts_Cmd+Enter', this.handleConfirmIdea)
+    bus.$off('ElectronShortcuts_Cmd+N', this.handleNewIdea)
   },
   methods: {
     startEditing() {
@@ -35,7 +44,12 @@ export default {
     },
     createIdea() {
       // 如果第一行是 # 开头，将后面的内容变成 category
-      const lines = this.content.split('\n')
+      const content = this.content.trim()
+      if (!content) {
+        return
+      }
+
+      const lines = content.split('\n')
       const idea = {}
       if (lines[0] && lines[0].trim().startsWith('#')) {
         idea.category = lines[0].trim().substring(1)
@@ -56,11 +70,21 @@ export default {
 
         idea.content = lines.slice(contentStart).join('\n')
       } else {
-        idea.content = this.content
+        idea.content = content
       }
 
       this.$store.dispatch('addIdea', idea)
       this.endEditing()
+    },
+    handleNewIdea() {
+      if (!this.editingNewIdea) {
+        this.startEditing()
+      }
+    },
+    handleConfirmIdea() {
+      if (this.editingNewIdea) {
+        this.createIdea()
+      }
     }
   }
 }

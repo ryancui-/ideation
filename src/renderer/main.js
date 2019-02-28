@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import bus from './bus'
 
+import { ipcRenderer } from 'electron'
 import '../../node_modules/@fortawesome/fontawesome-free/css/all.min.css'
 
 if (!process.env.IS_WEB) Vue.use(require('vue-electron'))
@@ -15,6 +16,10 @@ Vue.config.productionTip = false
 Vue.prototype.$notify = function(options) {
   bus.$emit('GlobalNotification', options)
 }
+
+ipcRenderer.on('ElectronShortcuts', (event, method) => {
+  bus.$emit(`ElectronShortcuts_${method}`)
+})
 
 /* eslint-disable no-new */
 new Vue({

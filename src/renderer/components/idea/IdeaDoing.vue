@@ -24,7 +24,6 @@
                 v-if="editingIdea && editingIdea.id === idea.id"
                 ref="appendContentTextarea"
                 @blur="endEditing"
-                @keyup.alt.enter="appendUpdate(idea)"
                 @keyup.esc="endEditing"
                 v-model="appendContent">
       </textarea>
@@ -46,6 +45,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import moment from 'moment'
+import bus from '@/bus'
 
 export default {
   data() {
@@ -54,6 +54,12 @@ export default {
       editingIdea: null,
       appendContent: ''
     }
+  },
+  created() {
+    bus.$on('ElectronShortcuts_Cmd+Enter', this.handleConfirmUpdate)
+  },
+  beforeDestroy() {
+    bus.$off('ElectronShortcuts_Cmd+Enter', this.handleConfirmUpdate)
   },
   computed: {
     ...mapState({
@@ -96,6 +102,11 @@ export default {
     },
     formatTime(time) {
       return moment(time).format('MM-DD HH:mm')
+    },
+    handleConfirmUpdate() {
+      if (this.editingIdea) {
+        this.appendUpdate(this.editingIdea)
+      }
     }
   }
 }
@@ -109,9 +120,8 @@ export default {
     overflow-y: auto;
     .ideation-doing__item {
       width: 100%;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      border-radius: 5px;
-      margin: 10px 0;
+      border: 1px solid #411a7a;
+      margin: 15px 0;
       box-sizing: border-box;
       box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
       position: relative;

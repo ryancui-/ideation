@@ -1,4 +1,10 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  Menu,
+  globalShortcut
+} from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -13,7 +19,7 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-function createWindow () {
+function createWindow() {
   /**
    * Initial window options
    */
@@ -30,7 +36,38 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+function createMenu() {
+  const template = [{
+    role: 'window',
+    submenu: [{
+      role: 'minimize'
+    }, {
+      role: 'close'
+    }]
+  }, {
+    role: 'help',
+    submenu: [{
+      role: 'about'
+    }]
+  }]
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
+function createShortcut() {
+  globalShortcut.register('CmdOrCtrl+N', () => {
+    mainWindow.webContents.send('ElectronShortcuts', 'Cmd+N')
+  })
+  globalShortcut.register('CmdOrCtrl+Enter', () => {
+    mainWindow.webContents.send('ElectronShortcuts', 'Cmd+Enter')
+  })
+}
+
+app.on('ready', () => {
+  createMenu()
+  createShortcut()
+  createWindow()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
