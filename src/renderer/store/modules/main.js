@@ -1,82 +1,139 @@
 import uuidv1 from 'uuid/v1'
+import moment from 'moment'
 
 const state = {
-  // 当前选择的分类，空为全部
-  currentCategory: '',
+  // 当前选择的分类，null为全部
+  currentCategory: null,
 
-  // ideas 核心数据
+  categories: [],
+
   ideas: [],
+
+  ideasDoing: [],
+
+  ideasDone: [],
 
   // ideas 的后续更新
   updates: {}
 }
 
 const getters = {
-  categories(state) {
-    return [...new Set(state.ideas.map(idea => idea.category).filter(c => c))]
+  ideasDoingByCategory(state) {
+    return state.currentCategory
+      ? state.ideasDoing.filter(idea => idea.category_id === state.currentCategory.id)
+      : state.ideasDoing
   },
-  ideasByCategory(state) {
-    const ideas = state.currentCategory
-      ? state.ideas.filter(idea => idea.category === state.currentCategory)
-      : state.ideas
+  ideasDoneByCategory: state => (start, end, search) => {
+    // TODO: 考虑搜索的功能
+    const result = []
 
-    // ideas.sort((ideaA, ideaB) => {
-    //   return ideaB.create_time - ideaA.create_time
-    // })
+    state.ideasDone.slice(start, end).forEach(group => {
+      const currentData = state.currentCategory
+        ? group.data.filter(idea => idea.category_id === state.currentCategory.id)
+        : group.data
 
-    return ideas
-  },
-  doingIdeas(state, getters) {
-    return getters.ideasByCategory.filter(idea => idea.status === 1)
-  },
-  doneIdeas(state, getters) {
-    return getters.ideasByCategory.filter(idea => idea.status !== 1)
+      if (currentData.length > 0) {
+        result.push({
+          day: group.day,
+          data: currentData
+        })
+      }
+    })
+
+    return result
   }
 }
 
 const mutations = {
+  // 改变当前选择分类
   changeCurrentCategory(state, payload) {
     state.currentCategory = payload
   },
-  addIdea(state, payload) {
-    // 加上动态生成的 ID
-    state.ideas.unshift(Object.assign({}, {
+  // 增加分类
+  addCategory(state, payload) {
+    state.categories.unshift(Object.assign({}, {
       id: uuidv1(),
-      status: 1,
-      category: state.currentCategory,
-      due_time: 0,
-      priority: 10,
       create_time: Date.now()
     }, payload))
   },
-  fulfillIdea(state, payload) {
-    const idea = state.ideas.find(i => i.id === payload.id)
-    if (idea) {
-      idea.status = 2
-      idea.fulfill_time = Date.now()
+  // 增加doing的idea
+  addIdea(state, payload) {
+    // 如果 payload.category 有值，先添加分类，再新增 idea
+    let category_id
+    if (payload.category) {
+      category_id = uuidv1()
+      state.categories.unshift({
+        id: category_id,
+        name: payload.category,
+        create_time: Date.now()
+      })
+    } else {
+      category_id = state.currentCategory ? state.currentCategory.id : undefined
+    }
+
+    // 加上动态生成的 ID
+    state.ideasDoing.unshift({
+      id: uuidv1(),
+      category_id,
+      content: payload.content,
+      due_time: payload.due_time || 0,
+      priority: payload.priority || 50,
+      create_time: Date.now()
+    })
+  },
+  // 结束一个 idea，将其丢到 ideasDone 队列中
+  finishIdea(state, payload) {
+    const ideaIndex = state.ideasDoing.findIndex(i => i.id === payload.id)
+    if (ideaIndex) {
+      const idea = state.ideasDoing[ideaIndex]
+      state.ideasDoing.splice(ideaIndex, 1)
+
+      // 没有数据或最新的 group 日期不对应
+      const today = moment().format('YYYY-MM-DD')
+      idea.status = payload.status
+      idea.done_time = Date.now()
+
+      if (state.ideasDone.length === 0 || state.ideasDone[0].day !== today) {
+        state.ideasDone.unshift({
+          day: today,
+          data: [idea]
+        })
+      } else {
+        state.ideasDone[0].data.unshift(idea)
+      }
     }
   },
-  deprecateIdea(state, payload) {
-    const idea = state.ideas.find(i => i.id === payload.id)
+  // 为 doing 的 idea 添加一个 update
+  appendUpdate(state, payload) {
+    const idea = state.ideasDoing.find(i => i.id === payload.id)
     if (idea) {
-      idea.status = 3
-      idea.deprecate_time = Date.now()
+      if (!state.updates[idea.id]) {
+        state.updates[idea.id] = []
+      }
+
+      state.updates[idea.id].unshift({
+        content: payload.content,
+        create_time: Date.now()
+      })
     }
-  },
+  }
 }
 
 const actions = {
   changeCurrentCategory({ commit }, payload) {
     commit('changeCurrentCategory', payload)
   },
+  addCategory({ commit }, payload) {
+    commit('addCategory', payload)
+  },
   addIdea({ commit }, payload) {
     commit('addIdea', payload)
   },
-  fulfillIdea({ commit }, payload) {
-    commit('fulfillIdea', payload)
+  finishIdea({ commit }, payload) {
+    commit('finishIdea', payload)
   },
-  deprecateIdea({ commit }, payload) {
-    commit('deprecateIdea', payload)
+  appendUpdate({ commit }, payload) {
+    commit('appendUpdate', payload)
   }
 }
 

@@ -2,28 +2,32 @@
   <div class="ideation-category">
     <div class="ideation-category__container">
       <div class="ideation-category__item"
-           @click="onCategorySelect('')"
+           @click="onCategorySelect(null)"
            :class="{ active: !currentCategory }">全部
       </div>
-      <div class="ideation-category__item" v-for="category in categories"
-           :key="category"
+      <div class="ideation-category__item" v-for="category in sortedCategories"
+           :key="category.id"
            @click="onCategorySelect(category)"
-           :class="{ active: currentCategory && currentCategory === category }">
-        {{ category }}
+           :class="{ active: currentCategory && currentCategory.id === category.id }">
+        {{ category.name }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   computed: {
     ...mapState({
+      categories: state => state.main.categories,
       currentCategory: state => state.main.currentCategory
     }),
-    ...mapGetters(['categories'])
+    sortedCategories() {
+      // TODO: 可以根据不同条件来排序分类
+      return this.categories
+    }
   },
   methods: {
     onCategorySelect(category) {

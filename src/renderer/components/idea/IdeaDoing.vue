@@ -1,15 +1,28 @@
 <template>
   <div class="ideation-doing-container">
     <div class="ideation-doing__item"
-         v-for="idea in doingIdeas" :key="idea.id"
+         v-for="(idea, index) in ideasDoingByCategory" :key="idea.id"
          @mouseenter="hoverItem = idea"
          @mouseleave="hoverItem = null">
       <div class="ideation-doing__item-content" v-html="formatLineBreak(idea.content)"></div>
+
+      <textarea class="ideation-doing__item-textarea"
+                v-if="editingIdea && editingIdea.id === idea.id"
+                ref="appendContentTextarea"
+                @blur="endEditing"
+                @keyup.alt.enter="appendUpdate(idea)"
+                @keyup.esc="endEditing"
+                v-model="appendContent">
+
+      </textarea>
       <div class="ideation-doing__item-operation"
-           v-show="idea.status === 1 && hoverItem && hoverItem.id === idea.id">
+           v-show="(!editingIdea || editingIdea.id !== idea.id) && hoverItem && hoverItem.id === idea.id">
         <i class="fas fa-check-circle"
            title="完成"
            @click="fulfillIdea(idea)"></i>
+        <i class="fas fa-arrow-down"
+           title="添加"
+           @click="startEditing(idea, index)"></i>
         <i class="fas fa-trash-alt"
            title="废弃"
            @click="deprecateIdea(idea)"></i>
@@ -24,21 +37,45 @@ import { mapState, mapGetters } from 'vuex'
 export default {
   data() {
     return {
-      hoverItem: null
+      hoverItem: null,
+      editingIdea: null,
+      appendContent: ''
     }
   },
   computed: {
-    ...mapGetters(['doingIdeas'])
+    ...mapGetters(['ideasDoingByCategory'])
   },
   methods: {
     fulfillIdea(idea) {
-      this.$store.dispatch('fulfillIdea', { id: idea.id })
+      this.$store.dispatch('finishIdea', {
+        id: idea.id,
+        status: 2
+      })
     },
     deprecateIdea(idea) {
-      this.$store.dispatch('deprecateIdea', { id: idea.id })
+      this.$store.dispatch('finishIdea', {
+        id: idea.id,
+        status: 3
+      })
     },
     formatLineBreak(text) {
       return text.replace(/\r\n|\n|\r/gm, '<br/>')
+    },
+    appendUpdate(idea) {
+      this.$store.dispatch('appendUpdate', {
+        id: idea.id,
+        content: this.appendContent
+      })
+    },
+    startEditing(idea, index) {
+      this.appendContent = ''
+      this.editingIdea = idea
+      this.$nextTick(() => {
+        this.$refs.appendContentTextarea[0].focus()
+      })
+    },
+    endEditing() {
+      this.editingIdea = null
     }
   }
 }
@@ -50,19 +87,37 @@ export default {
     overflow-y: auto;
     .ideation-doing__item {
       width: 100%;
-      padding: 10px;
       border: 1px solid rgba(0, 0, 0, 0.06);
       border-radius: 5px;
       margin: 5px 0;
       box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
       position: relative;
       .ideation-doing__item-content {
+        width: 100%;
         font-size: 13px;
-        flex: 1;
+        padding: 10px;
+        box-sizing: border-box;
       }
+
+      .ideation-doing__item-textarea {
+        height: 100px;
+        font-size: 13px;
+        line-height: 22px;
+        resize: none;
+        background-color: #f7f7f7;
+        border-radius: 5px;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.06);
+        outline: 0;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        display: block;
+      }
+
       .ideation-doing__item-operation {
         position: absolute;
         right: 20px;
