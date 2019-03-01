@@ -2,6 +2,10 @@
   <div class="ideation-doing-container">
     <div class="ideation-doing__item"
          v-for="(idea, index) in ideasDoingByCategory" :key="idea.id"
+         :class="{
+           'high': idea.priority > 50,
+           'low': idea.priority < 50
+         }"
          @mouseenter="hoverItem = idea"
          @mouseleave="hoverItem = null">
       <div class="ideation-doing__item-content">
@@ -125,6 +129,17 @@ export default {
       box-sizing: border-box;
       position: relative;
       box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
+
+      border-left: 3px solid #e1ba45;
+
+      &.high {
+        border-left: 3px solid red;
+      }
+
+      &.low {
+        border-left: 3px solid #1780c2;
+      }
+
       .ideation-doing__item-content {
         width: 100%;
         font-size: @main-font-size;
@@ -175,6 +190,8 @@ export default {
         width: max-content;
         display: flex;
         align-items: center;
+        background-color: #fff;
+        box-shadow: -10px 0 20px rgba(255,255,255,.7);
         i.fas {
           color: #666666;
           cursor: pointer;

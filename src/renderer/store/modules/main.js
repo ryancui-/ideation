@@ -20,9 +20,12 @@ const state = {
 
 const getters = {
   ideasDoingByCategory(state) {
-    return state.currentCategory
+    const result =  state.currentCategory
       ? state.ideasDoing.filter(idea => idea.category_id === state.currentCategory.id)
-      : state.ideasDoing
+      : state.ideasDoing.slice()
+
+    result.sort((a, b) => b.priority - a.priority)
+    return result
   },
   ideasDoneByCategory: state => (start, end, search) => {
     // TODO: 考虑搜索的功能
@@ -59,17 +62,21 @@ const mutations = {
   },
   // 增加doing的idea
   addIdea(state, payload) {
-    // 如果 payload.category 有值，先添加分类，再新增 idea
+    // 如果 payload.category 有值
     let category_id
     if (payload.category) {
-      category_id = uuidv1()
-      state.categories.unshift({
-        id: category_id,
-        name: payload.category,
-        create_time: Date.now()
-      })
-    } else {
-      category_id = state.currentCategory ? state.currentCategory.id : undefined
+      // 先寻找 category 当前是否已经有值
+      const hasCategory = state.categories.find(category => category.name === payload.category)
+      if (hasCategory) {
+        category_id = hasCategory.id
+      } else {
+        category_id = uuidv1()
+        state.categories.unshift({
+          id: category_id,
+          name: payload.category,
+          create_time: Date.now()
+        })
+      }
     }
 
     // 加上动态生成的 ID
