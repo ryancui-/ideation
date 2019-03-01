@@ -55,7 +55,7 @@ export default {
     height: 35px;
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     .ideation-idea__tab {
       width: 90px;
       height: 100%;
@@ -63,10 +63,8 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-right: 10px;
       cursor: pointer;
       box-sizing: border-box;
-      border-radius: 5px;
       &.active {
         background-color: #48129e;
         color: #fff;

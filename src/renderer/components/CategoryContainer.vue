@@ -93,6 +93,8 @@ export default {
 </script>
 
 <style lang="less">
+  @info-height: 60px;
+
   .ideation-category {
     position: fixed;
     top: 0;
@@ -104,7 +106,7 @@ export default {
   }
 
   .ideation-category__container {
-    height: 100%;
+    height: calc(100% - @info-height);
     overflow: auto;
 
     .ideation-category__item {
@@ -127,10 +129,20 @@ export default {
 
   .ideation-capacity-info {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
-    height: 30px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    height: @info-height;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     color: #eeeeee;
     font-size: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    &:hover {
+      opacity: 1;
+    }
   }
 </style>

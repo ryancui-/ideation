@@ -120,11 +120,11 @@ export default {
     overflow-y: auto;
     .ideation-doing__item {
       width: 100%;
-      border: 1px solid #411a7a;
+      border: 1px solid rgba(0, 0, 0, 0.1);
       margin: 15px 0;
       box-sizing: border-box;
-      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
       position: relative;
+      box-shadow: 0 3px 5px rgba(0, 0, 0, 0.05);
       .ideation-doing__item-content {
         width: 100%;
         font-size: @main-font-size;
