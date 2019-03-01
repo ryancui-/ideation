@@ -1,7 +1,5 @@
 <template>
   <div class="ideation-idea">
-    <idea-new></idea-new>
-
     <div class="ideation-idea__tabs">
       <div class="ideation-idea__tab"
            :class="{ active: this.currentTab === 1 }"
@@ -21,12 +19,10 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import IdeaDoing from './idea/IdeaDoing'
-import IdeaNew from './idea/IdeaNew'
 import IdeaDone from './idea/IdeaDone'
 
 export default {
   components: {
-    IdeaNew,
     IdeaDoing,
     IdeaDone
   },
@@ -45,7 +41,7 @@ export default {
     bottom: 0;
     left: 220px;
     right: 0;
-    padding: 20px 10px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
   }

@@ -95,6 +95,7 @@ export default {
           margin-left: 10px;
           font-size: 14px;
           padding: 10px;
+          line-height: 30px;
           border: 1px solid rgba(0, 0, 0, 0.06);
           &.deprecate {
             color: #999999;

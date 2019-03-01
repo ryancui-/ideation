@@ -131,6 +131,7 @@ export default {
         padding: 10px;
         box-sizing: border-box;
         position: relative;
+        line-height: 30px;
       }
 
       .ideation-doing__item-updates {
@@ -146,6 +147,7 @@ export default {
           .ideation-doing__item-update-content {
             flex: 1;
             font-size: @main-font-size;
+            line-height: 30px;
           }
         }
       }
@@ -153,7 +155,7 @@ export default {
       .ideation-doing__item-textarea {
         height: 100px;
         font-size: @main-font-size;
-        line-height: 22px;
+        line-height: 30px;
         resize: none;
         background-color: #f7f7f7;
         border: 0;

@@ -1,12 +1,11 @@
 <template>
-  <div class="ideation-new">
-    <div class="ideation-new__hints"
-         @click="startEditing">
-      <div>点击这儿记录想法</div>
+  <div v-show="editingNewIdea">
+    <div class="ideation-new__bg" @click.stop="endEditing"></div>
+    <div class="ideation-new__tips" @click.stop v-show="!content">
+      记录这一刻的想法
     </div>
-    <textarea v-if="editingNewIdea" v-model="content"
+    <textarea v-model="content"
               ref="contentTextarea"
-              @blur="endEditing"
               @keyup.esc="endEditing"
               class="ideation-new__textarea"></textarea>
   </div>
@@ -37,10 +36,12 @@ export default {
       this.$nextTick(() => {
         this.$refs.contentTextarea.focus()
       })
+      this.$emit('changeStatus', true)
     },
     endEditing() {
       this.editingNewIdea = false
       this.content = ''
+      this.$emit('changeStatus', false)
     },
     createIdea() {
       // 如果第一行是 # 开头，将后面的内容变成 category
@@ -91,44 +92,50 @@ export default {
 </script>
 
 <style lang="less">
-  .ideation-new {
-    position: relative;
+  @background-index: 200000;
+  @text-top: 50px;
+  @text-height: 60%;
 
-    .ideation-new__hints {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      border-radius: 5px;
-      box-sizing: border-box;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      cursor: pointer;
-      margin-bottom: 5px;
-      div {
-        width: 100%;
-        font-size: 14px;
-        text-align: center;
-        color: #a6a6a6;
-      }
-    }
+  .ideation-new__bg {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: @background-index;
+    background-color: #000;
+    opacity: 0.3;
+  }
 
-    .ideation-new__textarea {
-      position: absolute;
-      width: 100%;
-      top: 0;
-      left: 0;
-      z-index: 200000;
-      height: 360px;
-      font-size: 14px;
-      line-height: 22px;
-      resize: none;
-      border: 1px solid rgba(0, 0, 0, 0.06);
-      border-radius: 5px;
-      outline: 0;
-      padding: 10px;
-      box-sizing: border-box;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+  .ideation-new__tips {
+    position: fixed;
+    top: calc(@text-top + @text-height / 2 - 12px);
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.1;
+    color: #000;
+    font-size: 24px;
+    z-index: @background-index + 2;
+  }
+
+  .ideation-new__textarea {
+    position: fixed;
+    top: @text-top;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: @text-height;
+    font-size: 14px;
+    line-height: 30px;
+    border-radius: 10px;
+    z-index: @background-index + 1;
+    resize: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    outline: 0;
+    padding: 20px 15px;
+    box-sizing: border-box;
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 1;
+    background-color: #fff;
   }
 </style>

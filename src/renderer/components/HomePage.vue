@@ -1,18 +1,33 @@
 <template>
   <div>
-    <category-container></category-container>
-    <idea-container></idea-container>
+    <div :class="{ 'blur': opening }">
+      <category-container></category-container>
+      <idea-container></idea-container>
+    </div>
+    <idea-new @changeStatus="handleStatusChange"></idea-new>
   </div>
 </template>
 
 <script>
 import CategoryContainer from './CategoryContainer'
 import IdeaContainer from './IdeaContainer'
+import IdeaNew from './idea/IdeaNew'
 
 export default {
   components: {
     CategoryContainer,
-    IdeaContainer
+    IdeaContainer,
+    IdeaNew
+  },
+  data() {
+    return {
+      opening: false
+    }
+  },
+  methods: {
+    handleStatusChange(status) {
+      this.opening = status
+    }
   }
 }
 </script>
